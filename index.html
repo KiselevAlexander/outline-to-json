@@ -1,0 +1,91 @@
+<html lang='en'>
+    <head>
+        <title>Outline to shadowsocks.json</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+    </head>
+    <body>
+        <div class="ui inverted menu">
+            <div class="ui container">
+                <h1 class="item" style='font-size: 1rem'>Outline to shadowsocks.json</h1>
+            </div>
+        </div>
+        <div class="ui container" style='padding-top: 28px'>
+            <div class="ui input labeled fluid">
+                <label for='outline-string' class="ui label">Outline string:</label> <br>
+                <input id='outline-string'
+                       placeholder='ss://Y2hhY2hhMj...'>
+            </div>
+
+            <div id='result-container' class="ui message hidden">
+                <div class="header">
+                    outline.json
+                </div>
+                <div id='result' style='white-space: pre-wrap; margin-top: 16px;'></div>
+            </div>
+            <div style='margin-top: 28px;'>
+                <a id='download' class="ui button blue active disabled" disabled>
+                    <i class="download icon"></i>Download
+                </a>
+            </div>
+        </div>
+        <style>
+
+        </style>
+        <script>
+            function parseOutlineString(raw) {
+                const match = raw.match(/ss:\/\/(?<encoded>.+)@(?<host>.+):(?<port>.+)\//);
+                if (!match) {
+                    return null;
+                }
+                const decoded = atob(match.groups.encoded).split(':');
+                return {
+                    host: match.groups.host,
+                    port: match.groups.port,
+                    method: decoded[0],
+                    password: decoded[1],
+                };
+            }
+
+            function main() {
+                let result;
+                const outlineStringInput = document.getElementById('outline-string');
+                const downloadButton = document.getElementById('download');
+                const resultContainerDiv = document.getElementById('result-container');
+                const resultDiv = document.getElementById('result');
+                outlineStringInput.addEventListener('keyup', (event) => {
+                    if (event.target.value) {
+                        const outlineData = parseOutlineString(event.target.value.trim());
+                        if (outlineData) {
+                            result = {
+                                server: outlineData.host,
+                                server_port: outlineData.port,
+                                local_port: 1080,
+                                password: outlineData.password,
+                                method: outlineData.method,
+                                remarks: "Outline Server",
+                            };
+                            resultDiv.textContent = JSON.stringify(result, null, 2);
+
+                            downloadButton.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(result, null, 2)));
+                            downloadButton.setAttribute('download', 'outline.json');
+                            downloadButton.removeAttribute('disabled');
+                            resultContainerDiv.classList.remove('hidden');
+                            downloadButton.classList.remove('disabled');
+                            return;
+                        }
+                    }
+
+                    resultContainerDiv.classList.add('hidden');
+                    resultDiv.textContent = '';
+                    downloadButton.removeAttribute('href');
+                    downloadButton.removeAttribute('download');
+                    downloadButton.setAttribute('disabled', 'disabled');
+                    downloadButton.classList.add('disabled');
+                });
+            }
+
+            window.addEventListener('load', main);
+        </script>
+    </body>
+</html>
