@@ -70,7 +70,7 @@
                 const downloadButton = document.getElementById('download');
                 const resultContainerDiv = document.getElementById('result-container');
                 const resultDiv = document.getElementById('result');
-                outlineStringInput.addEventListener('keyup', (event) => {
+                outlineStringInput.addEventListener('change', (event) => {
                     if (event.target.value) {
                         const outlineData = parseOutlineString(event.target.value.trim());
                         if (outlineData) {
