@@ -6,7 +6,7 @@
         <meta property="og:title" content="Convert Outline VPN string to shadowsocks.json" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://kiselevalexander.github.io/outline-to-json/" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css" integrity="sha512-KXol4x3sVoO+8ZsWPFI/r5KBVB/ssCGB5tsv2nVOKwLg33wTFP3fmnXa47FdSVIshVTgsYk/1734xSk9aFIa4A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </head>
     <body>
         <!-- Yandex.Metrika counter -->
@@ -25,7 +25,7 @@
         </script>
         <noscript><div><img src="https://mc.yandex.ru/watch/98467264" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
         <!-- /Yandex.Metrika counter -->
-        <div class="ui inverted menu" style='border-radius: 0;'>
+        <div class="ui inverted menu" style='border-radius: 0;margin-top: 0;'>
             <div class="ui container">
                 <h1 class="item" style='font-size: 1rem'>Outline to shadowsocks.json</h1>
             </div>
@@ -51,7 +51,7 @@
         </div>
         <script>
             function parseOutlineString(raw) {
-                const match = raw.match(/ss:\/\/(?<encoded>.+)@(?<host>.+):(?<port>.+)\//);
+                const match = raw.match(/ss:\/\/(?<encoded>.+)@(?<host>.+):(?<port>\d+)/);
                 if (!match) {
                     return null;
                 }
@@ -70,7 +70,8 @@
                 const downloadButton = document.getElementById('download');
                 const resultContainerDiv = document.getElementById('result-container');
                 const resultDiv = document.getElementById('result');
-                outlineStringInput.addEventListener('change', (event) => {
+
+                function handlerChangeInput(event) {
                     if (event.target.value) {
                         const outlineData = parseOutlineString(event.target.value.trim());
                         if (outlineData) {
@@ -99,7 +100,9 @@
                     downloadButton.removeAttribute('download');
                     downloadButton.setAttribute('disabled', 'disabled');
                     downloadButton.classList.add('disabled');
-                });
+                }
+
+                outlineStringInput.addEventListener('input', handlerChangeInput);
             }
 
             window.addEventListener('load', main);
